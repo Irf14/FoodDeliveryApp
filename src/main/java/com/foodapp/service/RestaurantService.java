@@ -112,4 +112,16 @@ public class RestaurantService {
         }
         FileStorage.writeAllLines(MENU_FILE, updatedLines);
     }
+
+    public List<MenuItem> getAllMenuItems() {
+        List<MenuItem> allItems = new ArrayList<>();
+        List<String> lines = FileStorage.readAllLines(MENU_FILE);
+        for (String line : lines) {
+            MenuItem item = MenuItem.fromCsv(line);
+            if (item != null) {
+                allItems.add(item);
+            }
+        }
+        return allItems;
+    }
 }
