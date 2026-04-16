@@ -25,11 +25,11 @@ public class RestaurantService {
 
         String id = UUID.randomUUID().toString();
         Restaurant restaurant = new Restaurant(id, name, ownerId, area, openTime, closeTime, true);
-        
+
         List<String> lines = FileStorage.readAllLines(REST_FILE);
         lines.add(restaurant.toCsv());
         FileStorage.writeAllLines(REST_FILE, lines);
-        
+
         return restaurant;
     }
 
@@ -43,9 +43,16 @@ public class RestaurantService {
     }
 
     public void addMenuItem(String restaurantId, String name, double price, int quantity, String customizations) {
+        List<MenuItem> existingRests = getMenuForRestaurant(restaurantId);
+        for (MenuItem existing : existingRests) {
+            if (existing.getName().equalsIgnoreCase(name)) {
+                System.out.println("Error: You already have a MenuItem registered with this name!");
+                return; // Prevent duplicate
+            }
+        }
         String id = UUID.randomUUID().toString();
         MenuItem item = new MenuItem(id, restaurantId, name, price, true, quantity, customizations);
-        
+
         List<String> lines = FileStorage.readAllLines(MENU_FILE);
         lines.add(item.toCsv());
         FileStorage.writeAllLines(MENU_FILE, lines);
@@ -73,5 +80,36 @@ public class RestaurantService {
             updatedLines.add(r.toCsv());
         }
         FileStorage.writeAllLines(REST_FILE, updatedLines);
+    }
+
+    public void updateMenuItem(String itemId, String name, double price, int quantity, String customizations, boolean available) {
+        List<String> lines = FileStorage.readAllLines(MENU_FILE);
+        List<String> updatedLines = new ArrayList<>();
+        for (String line : lines) {
+            MenuItem item = MenuItem.fromCsv(line);
+            if (item != null && item.getId().equals(itemId)) {
+                item.setName(name);
+                item.setPrice(price);
+                item.setQuantity(quantity);
+                item.setCustomizations(customizations);
+                item.setAvailable(available);
+                updatedLines.add(item.toCsv());
+            } else {
+                updatedLines.add(line);
+            }
+        }
+        FileStorage.writeAllLines(MENU_FILE, updatedLines);
+    }
+
+    public void removeMenuItem(String itemId) {
+        List<String> lines = FileStorage.readAllLines(MENU_FILE);
+        List<String> updatedLines = new ArrayList<>();
+        for (String line : lines) {
+            MenuItem item = MenuItem.fromCsv(line);
+            if (item != null && !item.getId().equals(itemId)) {
+                updatedLines.add(line);
+            }
+        }
+        FileStorage.writeAllLines(MENU_FILE, updatedLines);
     }
 }
