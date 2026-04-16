@@ -124,4 +124,17 @@ public class RestaurantService {
         }
         return allItems;
     }
+
+    public void decrementStock(String itemId, int amount) {
+        List<MenuItem> all = getAllMenuItems();
+        for (MenuItem item : all) {
+            if (item.getId().equals(itemId)) {
+                int newQty = Math.max(0, item.getQuantity() - amount);
+                item.setQuantity(newQty);
+                // The MenuItem.setQuantity automatically updates its "available" status
+                updateMenuItem(item.getId(), item.getName(), item.getPrice(), item.getQuantity(), item.getCustomizations(), item.isAvailable());
+                return;
+            }
+        }
+    }
 }

@@ -35,4 +35,32 @@ The application utilizes an extremely simple **File Storage** mechanism. Data is
 2. Clone this repository (or open it your favorite IDE like Eclipse or IntelliJ IDEA).
 3. The entry point of the application is:
    `src/main/java/com/foodapp/Main.java`
-4. Run `Main.java`! The application will start the CLI loop in your Terminal, and the WSDL API will be published to `http://localhost:8080/ws/restaurants?wsdl`. 
+4. Run `Main.java`! The application will start the CLI loop in your Terminal, and the WSDL API will be published to `http://localhost:8080/ws/restaurants?wsdl`.
+
+---
+
+## 🎨 Modern Savoria Web UI (Optional Features)
+
+This project contains a hidden **"Savoria Premium"** Web UI designed with HTML5, Vanilla CSS (Dark Warm Theme), and JavaScript. This part is kept in a separate `backup_ui` directory to maintain the core assignment focus (Console + SOAP).
+
+### How to Restore the Web UI:
+If you want to use the modern browser-based interface, follow these steps:
+
+1. **Restore Webapp Files**: 
+   Move all content from `backup_ui/webapp/*` to `src/main/webapp/`.
+   
+2. **Restore REST API**: 
+   Move `backup_ui/ApiServer.java` to `src/main/java/com/foodapp/api/`.
+
+3. **Activate the Server**:
+   In `src/main/java/com/foodapp/Main.java`, add the following lines inside the `main` method before starting the Console UI:
+   ```java
+   try {
+       new com.foodapp.api.ApiServer().start(3000);
+   } catch (Exception e) {
+       System.out.println("API Server failed: " + e.getMessage());
+   }
+   ```
+
+4. **Launch**:
+   Restart the application and visit **`http://localhost:3000`** in your browser to experience the full dark-themed, animated Savoria Web App!

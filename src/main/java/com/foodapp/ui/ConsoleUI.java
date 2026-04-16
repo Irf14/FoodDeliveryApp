@@ -141,37 +141,58 @@ public class ConsoleUI {
     }
 
     private void placeOrderFlow(Restaurant r) {
-        System.out.println("--- Selected Restaurant: " + r.getName() + " ---");
-        System.out.println("Menu:");
-        // Assuming we added a getMenuForRestaurant in service (which we did)
-        var menuItems = restaurantService.getMenuForRestaurant(r.getId());
-        if (menuItems.isEmpty()) {
-            System.out.println("No menu items available.");
-            return;
-        }
-        
-        for (int i = 0; i < menuItems.size(); i++) {
-            var mi = menuItems.get(i);
-            System.out.println((i + 1) + ". " + mi.getName() + " - $" + mi.getPrice() + (mi.isAvailable() ? " (Available)" : " (Out of stock)"));
-        }
-
         List<OrderItem> cart = new ArrayList<>();
         while(true) {
-            System.out.print("Select item number to add to cart (or 0 to checkout): ");
-            int itemChoice = Integer.parseInt(scanner.nextLine());
+            System.out.println("\n--- Selected Restaurant: " + r.getName() + " ---");
+            System.out.println("Menu:");
+            var menuItems = restaurantService.getMenuForRestaurant(r.getId());
+            if (menuItems.isEmpty()) {
+                System.out.println("No menu items available.");
+                return;
+            }
+            
+            for (int i = 0; i < menuItems.size(); i++) {
+                var mi = menuItems.get(i);
+                String stockInfo = mi.getQuantity() > 0 ? "[Stock: " + mi.getQuantity() + "]" : "[NOT AVAILABLE]";
+                System.out.println((i + 1) + ". " + mi.getName() + " - $" + mi.getPrice() + " " + stockInfo);
+            }
+
+            if (!cart.isEmpty()) {
+                System.out.println("\n--- Current Cart ---");
+                for (OrderItem ci : cart) {
+                    System.out.println("- " + ci.getName() + " x" + ci.getQuantity());
+                }
+            }
+
+            System.out.print("\nSelect item number to add to cart (or 0 to checkout): ");
+            int itemChoice;
+            try {
+                itemChoice = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) { continue; }
+
             if (itemChoice == 0) break;
             
             if (itemChoice > 0 && itemChoice <= menuItems.size()) {
                 var selectedItem = menuItems.get(itemChoice - 1);
-                if (!selectedItem.isAvailable()) {
-                    System.out.println("Item is out of stock!");
+                if (selectedItem.getQuantity() <= 0) {
+                    System.out.println("❌ This item is currently out of stock!");
                     continue;
                 }
                 
-                System.out.print("Quantity: ");
-                int qty = Integer.parseInt(scanner.nextLine());
+                System.out.print("Quantity (Max " + selectedItem.getQuantity() + "): ");
+                int qty;
+                try {
+                    qty = Integer.parseInt(scanner.nextLine());
+                } catch (Exception e) { continue; }
+
+                if (qty <= 0) continue;
+                if (qty > selectedItem.getQuantity()) {
+                    System.out.println("❌ Only " + selectedItem.getQuantity() + " units left in stock!");
+                    continue;
+                }
+
                 cart.add(new OrderItem(selectedItem.getId(), selectedItem.getName(), qty, selectedItem.getPrice()));
-                System.out.println(qty + "x " + selectedItem.getName() + " added to cart.");
+                System.out.println("✅ " + qty + "x " + selectedItem.getName() + " added to cart.");
             }
         }
 

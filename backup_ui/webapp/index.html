@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Savoria — The most delicious food delivery experience in town. Order from top restaurants near you.">
+  <title>Savoria — Delicious Delivered 🍔</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+</head>
+<body>
+
+<!-- ============================================
+     TOAST NOTIFICATION
+     ============================================ -->
+<div id="toast" class="toast">
+  <span id="toast-icon">✅</span>
+  <span id="toast-text">Added to cart!</span>
+</div>
+
+<!-- ============================================
+     PAGE: AUTH (Login & Register)
+     ============================================ -->
+<div id="page-auth" class="auth-screen page">
+  <div class="auth-logo">
+    <div class="auth-logo-icon">🍕</div>
+    <h1>SAVORIA</h1>
+    <p>Delicious, Delivered. Always.</p>
+  </div>
+
+  <div class="auth-card card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="toggleAuthTab('login')">Login</button>
+      <button class="auth-tab" onclick="toggleAuthTab('register')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="auth-login">
+      <div class="form-group">
+        <label>Username</label>
+        <input id="login-username" class="form-input" placeholder="Enter your username" type="text">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input id="login-password" class="form-input" placeholder="Your secret sauce 🤫" type="password">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="handleLogin()">
+        Let's Eat! 🍽️
+      </button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="auth-register" class="hidden">
+      <div class="form-group">
+        <label>Username</label>
+        <input id="reg-username" class="form-input" placeholder="Pick a username" type="text">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input id="reg-password" class="form-input" placeholder="Make it spicy 🌶️" type="password">
+      </div>
+      <div class="form-group">
+        <label>Your Area / Address</label>
+        <input id="reg-address" class="form-input" placeholder="e.g. Dhanmondi, Gulshan" type="text">
+      </div>
+      <div class="form-group">
+        <label>I am a...</label>
+        <select id="reg-role" class="form-select">
+          <option value="CUSTOMER">🍔 Hungry Customer</option>
+          <option value="RESTAURANT_OWNER">👨‍🍳 Restaurant Owner</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="handleRegister()">
+        Create Account 🚀
+      </button>
+    </div>
+  </div>
+
+  <div class="auth-footer">
+    <p id="auth-toggle-text">Don't have an account? <a onclick="toggleAuthTab('register')">Register Now!</a></p>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE: CUSTOMER HOME FEED
+     ============================================ -->
+<div id="page-home" class="page hidden">
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header container">
+      <div class="header-greeting">
+        <h2>Hey, <span id="user-display-name">John</span>! 👋</h2>
+        <p>Hangry? Let's fix that.</p>
+      </div>
+      <div class="header-avatar" onclick="toggleProfileModal()">👤</div>
+    </header>
+
+    <!-- Profile Modal Overlay -->
+    <div id="profile-modal" class="modal-overlay hidden" onclick="toggleProfileModal()">
+      <div class="modal-content profile-modal-content" onclick="event.stopPropagation()">
+          <div class="profile-header">
+              <div class="profile-avatar-large">👤</div>
+              <h3 id="profile-name">John Doe</h3>
+              <p id="profile-role" class="pill pill-orange">Customer</p>
+          </div>
+          <div class="profile-body">
+              <div class="profile-info-item">
+                  <span>📍 Delivery Address</span>
+                  <p id="profile-address">123 Dhaka St, Bangladesh</p>
+              </div>
+              <div class="profile-info-item" style="cursor:pointer;" onclick="showPage('page-orders'); toggleProfileModal();">
+                  <span>🕒 My Order History</span>
+                  <p>View all previous orders</p>
+              </div>
+              <button class="btn btn-accent btn-full" onclick="handleLogout()" style="margin-top: 20px;">Logout</button>
+          </div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input id="search-input" type="text" placeholder="Craving Kacchi? Burgers? Search here..." oninput="handleSearch(this.value)">
+    </div>
+
+    <!-- Food Category Carousel -->
+    <div class="categories-section">
+      <h3>What's cooking? 🧑‍🍳</h3>
+      <div class="categories-scroll">
+        <div class="category-card" onclick="filterCategory('all', this)">
+          <span class="category-icon">🍽️</span>
+          <span>All</span>
+        </div>
+        <div class="category-card" onclick="filterCategory('burger', this)">
+          <span class="category-icon">🍔</span>
+          <span>Burgers</span>
+        </div>
+        <div class="category-card" onclick="filterCategory('deshi', this)">
+          <span class="category-icon">🍛</span>
+          <span>Deshi</span>
+        </div>
+        <div class="category-card" onclick="filterCategory('pizza', this)">
+          <span class="category-icon">🍕</span>
+          <span>Pizza</span>
+        </div>
+        <div class="category-card" onclick="filterCategory('dessert', this)">
+          <span class="category-icon">🍰</span>
+          <span>Desserts</span>
+        </div>
+        <div class="category-card" onclick="filterCategory('drink', this)">
+          <span class="category-icon">🧋</span>
+          <span>Drinks</span>
+        </div>
+        <div class="category-card" onclick="filterCategory('biryani', this)">
+          <span class="category-icon">🥘</span>
+          <span>Biryani</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promo Banner -->
+    <div class="promo-banner" onclick="showToast('💡', 'Use code SAVE10 at checkout!')">
+      <div class="promo-text">
+        <h3>10% OFF First Order! 🎉</h3>
+        <p>Use promo code at checkout</p>
+        <div class="promo-code-badge">SAVE10</div>
+      </div>
+      <div class="promo-emoji">🎁</div>
+    </div>
+
+    <!-- Food Search Results (shows individual food items) -->
+    <div id="food-search-results" class="hidden">
+      <div class="section-header">
+        <h3>🍽️ Food Items Found</h3>
+        <a onclick="clearFoodSearch()" style="cursor:pointer;">Clear ✕</a>
+      </div>
+      <div id="food-results-list"></div>
+    </div>
+
+    <!-- Restaurant Feed -->
+    <div class="section-header">
+      <h3 id="restaurant-feed-title">Nearby Restaurants 📍</h3>
+    </div>
+    <div id="restaurant-feed">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="showPage('page-home')">
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="handleSearchFoodNav()">
+      <span class="nav-icon">🔍</span>
+      <span>Search</span>
+    </button>
+    <button class="nav-item" onclick="showPage('page-cart')">
+      <span class="nav-icon nav-cart-badge">🛒<span class="badge" id="cart-badge">0</span></span>
+      <span>Cart</span>
+    </button>
+    <button class="nav-item" onclick="showPage('page-orders')">
+      <span class="nav-icon">📦</span>
+      <span>My Orders</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE: RESTAURANT MENU
+     ============================================ -->
+<div id="page-menu" class="page hidden">
+  <div class="menu-header">
+    <div class="menu-hero-bg" id="menu-hero-emoji">🍔</div>
+    <button class="menu-back-btn" onclick="showPage('page-home')">←</button>
+  </div>
+  <div class="menu-info">
+    <div class="menu-info-card card">
+      <h2 id="menu-restaurant-name">Restaurant Name</h2>
+      <div class="menu-info-meta">
+        <span class="pill pill-green" id="menu-status-pill">🟢 Open</span>
+        <span class="pill pill-dark" id="menu-time-pill">⏰ 09:00 - 23:00</span>
+        <span class="pill pill-orange" id="menu-area-pill">📍 Downtown</span>
+      </div>
+    </div>
+  </div>
+  <div class="menu-items-section">
+    <h3>Menu 🍽️</h3>
+    <div id="menu-items-list">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-item" onclick="showPage('page-home')">
+      <span class="nav-icon">🏠</span><span>Home</span>
+    </button>
+    <button class="nav-item" onclick="handleSearchFoodNav()">
+      <span class="nav-icon">🔍</span><span>Search</span>
+    </button>
+    <button class="nav-item" onclick="showPage('page-cart')">
+      <span class="nav-icon nav-cart-badge">🛒<span class="badge" id="cart-badge-menu">0</span></span><span>Cart</span>
+    </button>
+    <button class="nav-item" onclick="showPage('page-orders')">
+      <span class="nav-icon">📦</span><span>My Orders</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE: CART & CHECKOUT
+     ============================================ -->
+<div id="page-cart" class="page hidden">
+  <div class="container cart-page">
+    <div class="cart-header">
+      <button class="btn btn-icon" onclick="showPage('page-home')" style="background:#F3F4F6; font-size:18px;">←</button>
+      <h2>Your Cart 🛒</h2>
+    </div>
+
+    <div id="cart-items-list">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div id="cart-empty" class="empty-state hidden">
+      <div class="empty-state-icon">🍽️</div>
+      <h3>Your plate is empty!</h3>
+      <p>Looks like you haven't added anything yet. Go explore some delicious food!</p>
+      <button class="btn btn-primary" onclick="showPage('page-home')">Browse Restaurants 🍔</button>
+    </div>
+
+    <!-- Promo Code -->
+    <div id="promo-section" class="promo-section">
+      <label style="font-size:13px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;">Promo Code</label>
+      <div class="promo-input-group">
+        <input id="promo-code-input" class="promo-input" placeholder="ENTER CODE" type="text">
+        <button class="promo-apply-btn" onclick="applyPromo()">Apply</button>
+      </div>
+      <div id="promo-success-msg" class="promo-success hidden">
+        <span>🎉</span> Discount applied! You saved <strong id="promo-saved-amount">৳0</strong>
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <div id="cart-totals" class="cart-totals card">
+      <div class="cart-total-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">৳0</span>
+      </div>
+      <div class="cart-total-row">
+        <span>Delivery</span>
+        <span>৳30</span>
+      </div>
+      <div id="discount-row" class="cart-total-row discount hidden">
+        <span>🎉 SAVE10 Discount</span>
+        <span id="cart-discount">-৳0</span>
+      </div>
+      <div class="cart-total-row total">
+        <span>Total</span>
+        <span class="amount" id="cart-total-final">৳30</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom CTA -->
+  <div id="cart-bottom-cta" class="cart-fixed-bottom">
+    <div class="container">
+      <button class="btn btn-primary btn-full" onclick="placeOrder()" style="font-size:16px; padding:16px;">
+        Place Order 🚀
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE: ORDER SUCCESS
+     ============================================ -->
+<div id="page-success" class="page hidden">
+  <div class="container">
+    <div class="order-success">
+      <div class="order-success-icon">🎉</div>
+      <h2>Order Placed!</h2>
+      <p>Your food is being prepared. Sit tight, deliciousness is on its way!</p>
+      <div style="display:flex; gap:12px;">
+        <button class="btn btn-primary" onclick="showPage('page-orders')">Track Order 📦</button>
+        <button class="btn btn-outline" onclick="showPage('page-home')">Home 🏠</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE: MY ORDERS (Customer)
+     ============================================ -->
+<div id="page-orders" class="page hidden">
+  <div class="container">
+    <div class="cart-header">
+      <button class="btn btn-icon" onclick="showPage('page-home')" style="background:#F3F4F6; font-size:18px;">←</button>
+      <h2>My Orders 📦</h2>
+    </div>
+
+    <div id="orders-list">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div id="orders-empty" class="empty-state hidden">
+      <div class="empty-state-icon">😴</div>
+      <h3>No orders yet!</h3>
+      <p>When you place your first order, it'll show up here so you can track it.</p>
+      <button class="btn btn-primary" onclick="showPage('page-home')">Start Ordering 🍔</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item" onclick="showPage('page-home')">
+      <span class="nav-icon">🏠</span><span>Home</span>
+    </button>
+    <button class="nav-item" onclick="handleSearchFoodNav()">
+      <span class="nav-icon">🔍</span><span>Search</span>
+    </button>
+    <button class="nav-item" onclick="showPage('page-cart')">
+      <span class="nav-icon nav-cart-badge">🛒<span class="badge" id="cart-badge-orders">0</span></span><span>Cart</span>
+    </button>
+    <button class="nav-item active" onclick="showPage('page-orders')">
+      <span class="nav-icon">📦</span><span>My Orders</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE: OWNER DASHBOARD
+     ============================================ -->
+<div id="page-owner" class="page hidden">
+  <div class="container">
+    <div class="owner-header">
+      <div>
+        <h2>Chef's HQ 👨‍🍳</h2>
+        <p style="font-size:13px; color:var(--text-muted);">Manage your restaurant empire</p>
+      </div>
+      <div class="header-avatar" onclick="handleLogout()" title="Logout" style="background:linear-gradient(135deg, var(--success), #1a7a6e);">
+        <span id="owner-avatar-letter">O</span>
+      </div>
+    </div>
+
+    <!-- Owner Tabs -->
+    <div class="owner-tabs">
+      <button class="owner-tab active" onclick="switchOwnerTab('overview', this)">📊 Overview</button>
+      <button class="owner-tab" onclick="switchOwnerTab('menu', this)">🍽️ Menu</button>
+      <button class="owner-tab" onclick="switchOwnerTab('orders', this)">📦 Orders</button>
+      <button class="owner-tab" onclick="switchOwnerTab('settings', this)">⚙️ Settings</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="owner-tab-overview">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card card">
+          <div class="stat-number" id="stat-total-orders">12</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card card">
+          <div class="stat-number" id="stat-revenue">৳4,520</div>
+          <div class="stat-label">Revenue</div>
+        </div>
+        <div class="stat-card card">
+          <div class="stat-number" id="stat-menu-items">8</div>
+          <div class="stat-label">Menu Items</div>
+        </div>
+        <div class="stat-card card">
+          <div class="stat-number" style="color:var(--success)">98%</div>
+          <div class="stat-label">Satisfaction</div>
+        </div>
+      </div>
+
+      <!-- Toggle -->
+      <div class="toggle-container">
+        <div class="toggle-card card">
+          <div class="toggle-info">
+            <h3>Restaurant Status</h3>
+            <p id="toggle-status-text">Currently accepting orders</p>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <label class="toggle-switch">
+              <input type="checkbox" id="restaurant-toggle" checked onchange="toggleRestaurantStatus(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+            <span id="chef-hat" class="toggle-chef-hat show">👨‍🍳</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Order Kanban -->
+      <div class="section-header">
+        <h3>Active Orders 🔥</h3>
+      </div>
+      <div class="kanban-board" id="kanban-board">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Menu Tab -->
+    <div id="owner-tab-menu" class="hidden">
+      <!-- Add Item Form -->
+      <div class="add-item-card card">
+        <h3>➕ Add Menu Item</h3>
+        <div class="form-group">
+          <label>Item Name</label>
+          <input id="add-item-name" class="form-input" placeholder="e.g. Spicy Kacchi Biryani">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Price (৳)</label>
+            <input id="add-item-price" class="form-input" placeholder="250" type="number">
+          </div>
+          <div class="form-group">
+            <label>Quantity</label>
+            <input id="add-item-qty" class="form-input" placeholder="50" type="number">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Customizations</label>
+          <input id="add-item-custom" class="form-input" placeholder="e.g. Extra cheese, Spicy, No onion">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="ownerAddMenuItem()" style="margin-top:8px;">
+          Add to Menu 🍽️
+        </button>
+      </div>
+
+      <div class="section-header">
+        <h3>Current Menu</h3>
+      </div>
+      <div id="owner-menu-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div id="owner-tab-orders" class="hidden">
+      <div class="section-header">
+        <h3>Order Board 📋</h3>
+      </div>
+      <div class="kanban-board" id="owner-kanban-full">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="owner-tab-settings" class="hidden">
+      <!-- Register Restaurant -->
+      <div class="add-item-card card">
+        <h3>🏪 Register Restaurant</h3>
+        <div class="form-group">
+          <label>Restaurant Name</label>
+          <input id="reg-rest-name" class="form-input" placeholder="e.g. Bhai's Kitchen">
+        </div>
+        <div class="form-group">
+          <label>Area</label>
+          <input id="reg-rest-area" class="form-input" placeholder="e.g. Dhanmondi">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Open Time</label>
+            <input id="reg-rest-open" class="form-input" placeholder="09:00">
+          </div>
+          <div class="form-group">
+            <label>Close Time</label>
+            <input id="reg-rest-close" class="form-input" placeholder="23:00">
+          </div>
+        </div>
+        <button class="btn btn-success btn-full" onclick="registerRestaurant()" style="margin-top:8px;">
+          Register Restaurant 🚀
+        </button>
+      </div>
+
+      <div class="section-header">
+        <h3>My Restaurants</h3>
+      </div>
+      <div id="owner-restaurants-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

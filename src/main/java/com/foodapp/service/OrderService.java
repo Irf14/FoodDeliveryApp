@@ -11,6 +11,7 @@ import java.util.UUID;
 public class OrderService {
 
     private static final String ORDER_FILE = "orders.txt";
+    private final RestaurantService restaurantService = new RestaurantService();
 
     public Order placeOrder(String customerId, String restaurantId, List<OrderItem> items, String discountCode) {
         double total = 0;
@@ -27,6 +28,11 @@ public class OrderService {
         String id = UUID.randomUUID().toString();
         Order order = new Order(id, customerId, restaurantId, "PLACED", total, discountCode);
         order.setItems(items);
+
+        // --- NEW: Decrement Stock ---
+        for (OrderItem item : items) {
+            restaurantService.decrementStock(item.getMenuItemId(), item.getQuantity());
+        }
 
         List<String> lines = FileStorage.readAllLines(ORDER_FILE);
         lines.add(order.toCsv());
