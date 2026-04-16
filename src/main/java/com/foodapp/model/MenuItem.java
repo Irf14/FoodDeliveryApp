@@ -9,9 +9,11 @@ public class MenuItem {
     private int quantity;
     private String customizations; // e.g. "Add-ons: extra cheese, spicy"
 
-    public MenuItem() {}
+    public MenuItem() {
+    }
 
-    public MenuItem(String id, String restaurantId, String name, double price, boolean available, int quantity, String customizations) {
+    public MenuItem(String id, String restaurantId, String name, double price, boolean available, int quantity,
+            String customizations) {
         this.id = id;
         this.restaurantId = restaurantId;
         this.name = name;
@@ -22,36 +24,79 @@ public class MenuItem {
     }
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getRestaurantId() { return restaurantId; }
-    public void setRestaurantId(String restaurantId) { this.restaurantId = restaurantId; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getRestaurantId() {
+        return restaurantId;
+    }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
+    public String getName() {
+        return name;
+    }
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getCustomizations() { return customizations; }
-    public void setCustomizations(String customizations) { this.customizations = customizations; }
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public boolean isAvailable() {
+
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+
+        if (this.quantity <= 0) {
+            this.setAvailable(false);
+        } else {
+            this.setAvailable(true);
+        }
+    }
+
+    public String getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(String customizations) {
+        this.customizations = customizations;
+    }
 
     public String toCsv() {
-        return String.join(";", id, restaurantId, name, String.valueOf(price), String.valueOf(available), String.valueOf(quantity), customizations);
+        return String.join(";", id, restaurantId, name, String.valueOf(price), String.valueOf(available),
+                String.valueOf(quantity), customizations);
     }
 
     public static MenuItem fromCsv(String csv) {
         String[] parts = csv.split(";", -1);
         if (parts.length >= 7) {
-            return new MenuItem(parts[0], parts[1], parts[2], Double.parseDouble(parts[3]), 
-                   Boolean.parseBoolean(parts[4]), Integer.parseInt(parts[5]), parts[6]);
+            return new MenuItem(parts[0], parts[1], parts[2], Double.parseDouble(parts[3]),
+                    Boolean.parseBoolean(parts[4]), Integer.parseInt(parts[5]), parts[6]);
         }
         return null;
     }
