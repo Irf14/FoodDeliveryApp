@@ -14,6 +14,15 @@ public class RestaurantService {
     private static final String MENU_FILE = "menus.txt";
 
     public Restaurant registerRestaurant(String name, String ownerId, String area, String openTime, String closeTime) {
+        // Check if a restaurant with exactly the same name and owner already exists
+        List<Restaurant> existingRests = getAllRestaurants();
+        for (Restaurant existing : existingRests) {
+            if (existing.getName().equalsIgnoreCase(name) && existing.getOwnerId().equals(ownerId)) {
+                System.out.println("Error: You already have a restaurant registered with this name!");
+                return null; // Prevent duplicate
+            }
+        }
+
         String id = UUID.randomUUID().toString();
         Restaurant restaurant = new Restaurant(id, name, ownerId, area, openTime, closeTime, true);
         

@@ -202,8 +202,12 @@ public class ConsoleUI {
             System.out.print("Open Time (e.g. 09:00): "); String open = scanner.nextLine();
             System.out.print("Close Time: "); String close = scanner.nextLine();
             
-            restaurantService.registerRestaurant(name, loggedInUser.getId(), area, open, close);
-            System.out.println("Restaurant registered!");
+            Restaurant newRest = restaurantService.registerRestaurant(name, loggedInUser.getId(), area, open, close);
+            if (newRest != null) {
+                System.out.println("Restaurant registered successfully!");
+            } else {
+                System.out.println("Failed to register restaurant.");
+            }
         } else if (choice.equals("3")) {
             System.out.print("Enter your exact Restaurant ID: ");
             String rId = scanner.nextLine();
