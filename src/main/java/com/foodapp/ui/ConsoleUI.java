@@ -67,16 +67,31 @@ public class ConsoleUI {
                 System.out.println("Login successful! Welcome " + loggedInUser.getUsername());
             }
         } else if (choice.equals("2")) {
+            System.out.println("\n--- Registration ---");
+            System.out.println("1. Register as Customer");
+            System.out.println("2. Apply as Restaurant Owner");
+            System.out.print("Choose option: ");
+            String regChoice = scanner.nextLine();
+
+            if (!regChoice.equals("1") && !regChoice.equals("2")) {
+                System.out.println("Invalid option. Returning to main menu...");
+                return;
+            }
+
             System.out.print("Username: ");
             String username = scanner.nextLine();
             System.out.print("Password: ");
             String password = scanner.nextLine();
-            System.out.print("Role (CUSTOMER/RESTAURANT_OWNER): ");
-            String role = scanner.nextLine().toUpperCase();
             System.out.print("Address/Area: ");
             String address = scanner.nextLine();
 
-            User u = userService.register(username, password, role, address);
+            User u = null;
+            if (regChoice.equals("1")) {
+                u = userService.registerCustomer(username, password, address);
+            } else if (regChoice.equals("2")) {
+                u = userService.registerOwner(username, password, address);
+            }
+
             if (u != null) {
                 System.out.println("Registered successfully! Please login.");
             }

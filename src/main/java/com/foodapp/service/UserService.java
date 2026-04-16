@@ -22,7 +22,21 @@ public class UserService {
         return null; // Login failed
     }
 
-    public User register(String username, String password, String role, String address) {
+    public User registerCustomer(String username, String password, String address) {
+        return registerInternal(username, password, "CUSTOMER", address);
+    }
+
+    public User registerOwner(String username, String password, String address) {
+        // In a real application, this could add them to a pending approval list
+        return registerInternal(username, password, "RESTAURANT_OWNER", address);
+    }
+
+    public User registerAdmin(String username, String password, String address) {
+        // Real-world: Should only be allowed if called by another Admin
+        return registerInternal(username, password, "ADMIN", address);
+    }
+
+    private User registerInternal(String username, String password, String role, String address) {
         // Check if username already exists
         List<String> lines = FileStorage.readAllLines(FILE_NAME);
         for (String line : lines) {
